@@ -2,22 +2,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Model
 from keras.layers import Dense, Input, Dropout, LSTM, Activation
-from keras.layers.embeddings import Embedding
+from keras.layers import Embedding
 from keras.preprocessing import sequence
 from keras.initializers import glorot_uniform
-from emo_utils import *
+from emojify.emo_utils import *
 import emoji
+
 np.random.seed(1)
 
-X_train, Y_train = read_csv('data/train_emoji.csv')
-X_test, Y_test = read_csv('data/tesss.csv')
+X_train, Y_train = read_csv('emojify/data/train_emoji.csv')
+X_test, Y_test = read_csv('emojify/data/tesss.csv')
 
 maxLen = len(max(X_train, key=len).split())
 
 Y_oh_train = convert_to_one_hot(Y_train, C = 5)
 Y_oh_test = convert_to_one_hot(Y_test, C = 5)
 
-word_to_index, index_to_word, word_to_vec_map = read_glove_vecs('../word2vec/data/glove.6B.50d.txt')
+word_to_index, index_to_word, word_to_vec_map = read_glove_vecs('emojify/data/glove.6B.50d.txt')
 
 def sentence_to_avg(sentence, word_to_vec_map):
     """
@@ -172,24 +173,27 @@ def Emojify_V2(input_shape, word_to_vec_map, word_to_index):
     return model
 
 
-model = Emojify_V2((maxLen,), word_to_vec_map, word_to_index)
-model.summary()
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+def train():
+    model = Emojify_V2((maxLen,), word_to_vec_map, word_to_index)
+    model.summary()
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-X_train_indices = sentences_to_indices(X_train, word_to_index, maxLen)
-Y_train_oh = convert_to_one_hot(Y_train, C = 5)
+    X_train_indices = sentences_to_indices(X_train, word_to_index, maxLen)
+    Y_train_oh = convert_to_one_hot(Y_train, C = 5)
 
-model.fit(X_train_indices, Y_train_oh, epochs = 50, batch_size = 32, shuffle=True)
+    model.fit(X_train_indices, Y_train_oh, epochs = 50, batch_size = 32, shuffle=True)
 
-X_test_indices = sentences_to_indices(X_test, word_to_index, max_len = maxLen)
-Y_test_oh = convert_to_one_hot(Y_test, C = 5)
-loss, acc = model.evaluate(X_test_indices, Y_test_oh)
-print("Test accuracy = ", acc)
+    X_test_indices = sentences_to_indices(X_test, word_to_index, max_len = maxLen)
+    Y_test_oh = convert_to_one_hot(Y_test, C = 5)
+    loss, acc = model.evaluate(X_test_indices, Y_test_oh)
+    print("Test accuracy = ", acc)
+    return model
 
-while True:
-    input_sent=input()
+def emojify_given_model(statement, emoji_model):
+    input_sent=statement
     input_sent=np.array([input_sent])
     input_indices=sentences_to_indices(input_sent, word_to_index, maxLen)
-    pred = model.predict(input_indices)
+    pred = emoji_model.predict(input_indices)
     num = np.argmax(pred)
     print(label_to_emoji(num).strip())
+    return num
