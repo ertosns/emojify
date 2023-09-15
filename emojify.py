@@ -181,7 +181,7 @@ def train():
     X_train_indices = sentences_to_indices(X_train, word_to_index, maxLen)
     Y_train_oh = convert_to_one_hot(Y_train, C = 5)
 
-    model.fit(X_train_indices, Y_train_oh, epochs = 50, batch_size = 32, shuffle=True)
+    model.fit(X_train_indices, Y_train_oh, epochs = 100, batch_size = 32, shuffle=True)
 
     X_test_indices = sentences_to_indices(X_test, word_to_index, max_len = maxLen)
     Y_test_oh = convert_to_one_hot(Y_test, C = 5)

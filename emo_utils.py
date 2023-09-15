@@ -119,14 +119,3 @@ def predict(X, Y, W, b, word_to_vec_map):
     print("Accuracy: "  + str(np.mean((pred[:] == Y.reshape(Y.shape[0],1)[:]))))
 
     return pred
-
-Y = np.asarray([5,0,0,5, 4, 4, 4, 6, 6, 4, 1, 1, 5, 6, 6, 3, 6, 3, 4, 4])
-X = np.asarray(['I am going to the bar tonight', 'I love you', 'miss you my dear',
- 'Lets go party and drinks','Congrats on the new job','Congratulations',
- 'I am so happy for you', 'Why are you feeling bad', 'What is wrong with you',
- 'You totally deserve this prize', 'Let us go play football',
- 'Are you down for football this afternoon', 'Work hard play harder',
- 'It is suprising how people can be dumb sometimes',
- 'I am very disappointed','It is the best day in my life',
- 'I think I will end up alone','My life is so boring','Good job',
- 'Great so awesome'])
